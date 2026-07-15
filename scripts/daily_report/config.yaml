@@ -1,0 +1,37 @@
+# 毎朝の業界ニュースレポート設定
+# パスやモデル名は環境に合わせて編集してください。
+
+language: 日本語
+
+# レポート対象トピック(多いほど時間とコストが増えます。3〜5個推奨)
+topics:
+  - name: 生成AI業界
+    focus: 主要モデル・API のリリース、価格改定、企業の採用事例、X 上で話題の議論
+  - name: Apple / macOS
+    focus: macOS・開発者向けツール・自動化関連のアップデートとコミュニティの反応
+
+output:
+  local_dir: ~/Reports/daily          # ローカル保存先
+  rclone_remote: "gdrive:Reports/daily"  # rclone のリモートパス("" にすると Drive アップロードなし)
+
+providers:
+  # ニュース収集: Grok(web_search + x_search でリアルタイム情報を取得)
+  news_model: grok-4.5
+  # 統合サマリーなど軽い処理のフォールバック(Ollama が起動していない場合に使用)
+  fast_model: grok-4.1-fast
+  # ローカル LLM(Ollama)。起動していれば統合サマリーはこちらで無料処理
+  local_model: llama3.2
+  # 週1回の深掘りレポート: Perplexity sonar-deep-research(約$0.3〜1.3/本)
+  deep_research:
+    enabled: false        # PERPLEXITY_API_KEY を設定したら true に
+    weekday: 0            # 0=月曜(この曜日だけ実行)
+    model: sonar-deep-research
+    query: 生成AI業界の直近1週間の重要動向を、引用付きで包括的にレポートしてください。
+
+# macOS 通知(terminal-notifier がある場合)
+notify: true
+
+# 1回の実行あたりの安全上限
+limits:
+  max_topics: 5
+  max_output_tokens: 8000
