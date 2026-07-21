@@ -12,7 +12,7 @@ topics:
 
 output:
   local_dir: ~/Reports/daily          # ローカル保存先
-  rclone_remote: "gdrive:Reports/daily"  # rclone のリモートパス("" にすると Drive アップロードなし)
+  rclone_remote: ""  # rclone 未導入のため一旦ローカル保存のみ。導入後 "gdrive:Reports/daily" に戻す
 
 providers:
   # ニュース収集: Grok(web_search + x_search でリアルタイム情報を取得)
