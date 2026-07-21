@@ -20,8 +20,10 @@ if ! command -v n8n >/dev/null; then
 fi
 
 # --- n8n 設定(localhost 個人利用向け) ---
-# データ(ワークフロー・認証情報・暗号鍵)は ~/.n8n に永続化される。
-export N8N_USER_FOLDER="${N8N_USER_FOLDER:-$HOME/.n8n}"
+# データ(ワークフロー・認証情報・暗号鍵)は $N8N_USER_FOLDER/.n8n に作られる。
+# ベースをホームにすると ~/.n8n に永続化される($HOME/.n8n を指定すると
+# ~/.n8n/.n8n と入れ子になるので注意)。
+export N8N_USER_FOLDER="${N8N_USER_FOLDER:-$HOME}"
 export N8N_HOST="127.0.0.1"
 export N8N_PORT="5678"
 export N8N_PROTOCOL="http"
