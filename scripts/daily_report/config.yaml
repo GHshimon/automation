@@ -29,7 +29,9 @@ providers:
     query: 生成AI業界の直近1週間の重要動向を、引用付きで包括的にレポートしてください。
 
 # macOS 通知(terminal-notifier がある場合)
-notify: true
+# n8n 化に伴い通知は n8n ワークフロー側が担当するため false。
+# Python を単体実行する場合に通知が欲しければ true に戻す。
+notify: false
 
 # 1回の実行あたりの安全上限
 limits:

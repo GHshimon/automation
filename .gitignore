@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .venv/
 .env
+
+# n8n ローカル隔離ランタイム(再インストール可)
+scripts/n8n/.n8n-runtime/
