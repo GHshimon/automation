@@ -3,12 +3,15 @@
 
 language: 日本語
 
-# レポート対象トピック(多いほど時間とコストが増えます。3〜5個推奨)
+# レポート対象トピック(1トピック = 検索付き1回の API 呼び出し = 課金の主単位)。
+# コスト削減のため2分野を1トピックに集約(検索呼び出しを半減)。分野を分けたい/
+# 増やしたい場合は topic を追加すればよいが、その分コストは線形に増える。
 topics:
-  - name: 生成AI業界
-    focus: 主要モデル・API のリリース、価格改定、企業の採用事例、X 上で話題の議論
-  - name: Apple / macOS
-    focus: macOS・開発者向けツール・自動化関連のアップデートとコミュニティの反応
+  - name: 生成AI業界 と Apple/macOS
+    focus: >-
+      2分野を扱う。(1)生成AI業界: 主要モデル・API のリリース、価格改定、企業の採用事例、
+      X 上で話題の議論。(2)Apple/macOS: macOS・開発者向けツール・自動化関連のアップデートと
+      コミュニティの反応。各分野を別々の小見出しに分けて書くこと。
 
 output:
   local_dir: ~/Reports/daily          # ローカル保存先
@@ -16,7 +19,9 @@ output:
 
 providers:
   # ニュース収集: Grok(web_search + x_search でリアルタイム情報を取得)
-  news_model: grok-4.5
+  # 非推論モデルを使用: 推論トークンが出ずコストが大幅に下がる(grok-4.5 比 約-70%)。
+  # 検索ツールは非推論モデルでも利用可能なことを実測で確認済み。
+  news_model: grok-4.20-0309-non-reasoning
   # 統合サマリーなど軽い処理のフォールバック(Ollama が起動していない場合に使用)
   # 非推論モデルで安価・高速。有効なモデル名は `curl https://api.x.ai/v1/models` で確認。
   fast_model: grok-4.20-0309-non-reasoning
@@ -37,4 +42,4 @@ notify: false
 # 1回の実行あたりの安全上限
 limits:
   max_topics: 5
-  max_output_tokens: 8000
+  max_output_tokens: 3000  # 出力上限を締めてコスト抑制(8000→3000)

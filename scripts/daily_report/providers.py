@@ -26,6 +26,18 @@ XAI_BASE_URL = "https://api.x.ai/v1"
 PERPLEXITY_BASE_URL = "https://api.perplexity.ai"
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
+# xAI モデルの参考単価(USD / 100万トークン)。2026-07 時点、docs.x.ai より。
+# 正確な最新値は https://docs.x.ai/docs/models で確認すること。
+# Live Search は $5/1,000 呼び出し(1回$0.005)と誤差レベルのためコスト概算には含めない。
+XAI_PRICES = {
+    "grok-4.5": (2.00, 6.00),
+    "grok-4.3": (1.25, 2.50),
+    "grok-4.20-0309-non-reasoning": (1.25, 2.50),
+    "grok-4.20-0309-reasoning": (1.25, 2.50),
+    "grok-4.20-multi-agent-0309": (1.25, 2.50),
+}
+DEFAULT_XAI_PRICE = (1.25, 2.50)
+
 
 def get_secret(env_var: str, keychain_service: str) -> str | None:
     """環境変数、なければ macOS キーチェーンから取得する。"""
@@ -55,6 +67,26 @@ class Router:
         self.pplx_key = get_secret("PERPLEXITY_API_KEY", "perplexity-api-key")
         self._xai_client = None
         self._pplx_client = None
+        # コスト可視化用の累計(xAI 分の推定 USD)
+        self.total_cost = 0.0
+        self.total_input_tokens = 0
+        self.total_output_tokens = 0
+
+    def _log_xai_usage(self, model: str, usage) -> None:
+        """xAI 応答の usage から実トークンと推定コストをログ + 累計する。"""
+        if usage is None:
+            return
+        it = getattr(usage, "input_tokens", None) or getattr(usage, "prompt_tokens", 0) or 0
+        ot = getattr(usage, "output_tokens", None) or getattr(usage, "completion_tokens", 0) or 0
+        p_in, p_out = XAI_PRICES.get(model, DEFAULT_XAI_PRICE)
+        cost = it / 1e6 * p_in + ot / 1e6 * p_out
+        self.total_cost += cost
+        self.total_input_tokens += it
+        self.total_output_tokens += ot
+        log.info(
+            "コスト[%s] input=%d output=%d 概算=$%.4f (累計 $%.4f)",
+            model, it, ot, cost, self.total_cost,
+        )
 
     # ---------- Grok: ニュース収集(リアルタイム検索付き) ----------
 
@@ -84,12 +116,14 @@ class Router:
 
 ルール: 事実と観測を区別する。各ニュースには出典 URL を付ける。重要な動きがない場合は正直に「特筆すべき動きなし」と書く。出力全体を ``` などのコードフェンスで囲まず、そのまま Markdown 本文として書くこと。"""
 
+        model = self.cfg.get("news_model", "grok-4.20-0309-non-reasoning")
         response = self._xai().responses.create(
-            model=self.cfg.get("news_model", "grok-4.5"),
+            model=model,
             input=[{"role": "user", "content": prompt}],
             tools=[{"type": "web_search"}, {"type": "x_search"}],
             max_output_tokens=max_output_tokens,
         )
+        self._log_xai_usage(model, getattr(response, "usage", None))
         text = getattr(response, "output_text", None)
         if not text:
             raise ProviderError(f"Grok から空の応答 (topic={topic['name']})")
@@ -109,10 +143,12 @@ class Router:
                 return self._ollama_generate(local_model, prompt)
             except Exception as e:  # ローカル失敗はフォールバックで続行
                 log.warning("Ollama での要約に失敗、fast_model へフォールバック: %s", e)
+        fast_model = self.cfg.get("fast_model", "grok-4.20-0309-non-reasoning")
         response = self._xai().responses.create(
-            model=self.cfg.get("fast_model", "grok-4.1-fast"),
+            model=fast_model,
             input=[{"role": "user", "content": prompt}],
         )
+        self._log_xai_usage(fast_model, getattr(response, "usage", None))
         return response.output_text.strip()
 
     def _ollama_available(self) -> bool:

@@ -110,11 +110,16 @@ def build_report(config: dict, today: datetime.date) -> str:
     if failures:
         parts.append("## ⚠️ 生成時のエラー\n\n" + "\n".join(failures))
 
+    log.info(
+        "本日の推定コスト: $%.4f (input=%d output=%d tokens)",
+        router.total_cost, router.total_input_tokens, router.total_output_tokens,
+    )
     parts.append(
         f"*生成: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')} / "
         f"news={config['providers'].get('news_model')} "
         f"summary=ollama:{config['providers'].get('local_model')} or "
-        f"{config['providers'].get('fast_model')}*"
+        f"{config['providers'].get('fast_model')} / "
+        f"推定コスト ${router.total_cost:.4f}*"
     )
     return "\n\n".join(parts) + "\n"
 
