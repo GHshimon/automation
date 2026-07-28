@@ -32,6 +32,16 @@ export N8N_SECURE_COOKIE="false"        # http://localhost アクセスを許可
 export N8N_RUNNERS_ENABLED="true"       # 新しいタスクランナー方式(将来の既定)
 export N8N_DIAGNOSTICS_ENABLED="false"  # テレメトリ無効
 export N8N_PERSONALIZATION_ENABLED="false"
+
+# Execute Command ノードの再有効化。
+# n8n 2.0 以降、executeCommand と localFileTrigger は既定の除外リスト
+# (NODES_EXCLUDE)でブロックされる(任意のシェル実行はセキュリティリスクのため)。
+# 本ワークフローは Execute Command で run.sh を呼ぶため、除外リストを上書きして
+# executeCommand を許可する(localFileTrigger は引き続き除外)。
+# ⚠️ これでワークフロー編集権限を持つ者は任意のシェルコマンドを実行できる。
+#    本構成は 127.0.0.1 限定・単一オーナーのローカル運用のため許容。
+#    公開・複数ユーザーで使う場合はこの行を外すこと。
+export NODES_EXCLUDE='["n8n-nodes-base.localFileTrigger"]'
 export GENERIC_TIMEZONE="Asia/Tokyo"
 export TZ="Asia/Tokyo"
 

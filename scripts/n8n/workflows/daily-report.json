@@ -1,4 +1,5 @@
 {
+  "id": "daily-report",
   "name": "毎朝6時 業界ニュースレポート",
   "active": false,
   "settings": {
