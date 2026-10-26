@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 毎日 06:30 に収集する。週次は README の手順で com.shimon.ops-pulse-weekly として複製する。
+     __DIR__ は scripts/ops_pulse の絶対パスに置き換える（XML コメント内に連続ハイフンを書かないこと） -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.shimon.ops-pulse</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/python3</string>
+    <string>__DIR__/pulse.py</string>
+  </array>
+  <key>WorkingDirectory</key><string>__DIR__</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+  <key>StandardOutPath</key><string>__DIR__/data/launchd.log</string>
+  <key>StandardErrorPath</key><string>__DIR__/data/launchd-error.log</string>
+</dict>
+</plist>

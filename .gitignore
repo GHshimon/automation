@@ -5,3 +5,6 @@ __pycache__/
 
 # n8n ローカル隔離ランタイム(再インストール可)
 scripts/n8n/.n8n-runtime/
+
+# ops-pulse の収集結果(ローカルの状態・トークン集計を含む)
+scripts/ops_pulse/data/

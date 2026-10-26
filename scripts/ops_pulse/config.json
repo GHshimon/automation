@@ -1,0 +1,24 @@
+{
+  "root": "~/project",
+  "data_dir": "data",
+  "launch_agents_dir": "~/Library/LaunchAgents",
+  "launchd_prefixes": ["com.shimon.", "com.user.", "com.cutsrt."],
+  "disk_path": "/System/Volumes/Data",
+  "brewfile": "~/project/Mac環境/mac-setup/Brewfile",
+  "claude_projects_dir": "~/.claude/projects",
+  "versions": {
+    "claude": ["claude", "--version"],
+    "codex": ["codex", "--version"],
+    "node": ["node", "--version"],
+    "python3": ["python3", "--version"],
+    "git": ["git", "--version"],
+    "gh": ["gh", "--version"],
+    "brew": ["brew", "--version"]
+  },
+  "thresholds": {
+    "disk_free_pct": 10,
+    "disk_free_gb": 30,
+    "pending_approval_days": 3,
+    "unpushed_days": 3
+  }
+}
