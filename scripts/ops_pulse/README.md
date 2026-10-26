@@ -31,6 +31,8 @@ python3 -m unittest test_pulse      # テスト
 - git は `core.fsmonitor` とフックを無効にして呼ぶ（収集対象のリポジトリの設定でコマンドが実行されないように）。
 - 時間とともに必ず変わる値（滞留日数、ディスク空き）は差分に含めず、しきい値（`config.json` の `thresholds`）で異常として判定する。
 
-## 定時実行（未登録）
+## 定時実行
 
-`com.shimon.ops-pulse.plist.template` の `__DIR__` を置き換えて `~/Library/LaunchAgents/` に置き、`launchctl bootstrap gui/$(id -u) <plist>` で登録する。週次は同じものを `--weekly`・日曜で複製する。
+2026-10-26 に登録済み: `com.shimon.ops-pulse`（毎日 06:30）、`com.shimon.ops-pulse-weekly`（日曜 07:00、`--weekly`）。ログは `data/launchd*.log`。
+
+再登録の手順: `com.shimon.ops-pulse.plist.template` の `__DIR__` を置き換えて `~/Library/LaunchAgents/` に置き、`launchctl bootstrap gui/$(id -u) <plist>` で登録する。週次は同じものを `--weekly`・日曜で複製する。

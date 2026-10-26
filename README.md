@@ -9,5 +9,5 @@ macOS 上で AI(Claude などのエージェント)を使った作業自動化�
 
 ## 実装済み自動化
 
-- [ops-pulse 運用状態の収集](scripts/ops_pulse/) — 全プロジェクトと Mac の状態を AI なし・読み取り専用で集め、差分と異常をまとめる(運用ループ設計 [ops-loop-design.md](docs/ops-loop-design.md) の S1。launchd は未登録)
+- [ops-pulse 運用状態の収集](scripts/ops_pulse/) — 全プロジェクトと Mac の状態を AI なし・読み取り専用で集め、差分と異常をまとめる(運用ループ設計 [ops-loop-design.md](docs/ops-loop-design.md) の S1。launchd で毎日 06:30 と日曜 07:00 に実行)
 - [毎朝6時の業界ニュースレポート](scripts/daily_report/) — マルチ AI 構成(Grok がニュース収集 → Ollama/grok-fast がサマリー → 週次で Perplexity 深掘り)で生成し、rclone で Google Drive に保存する launchd ジョブ。セットアップ手順は同ディレクトリの README を参照
