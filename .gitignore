@@ -8,3 +8,4 @@ scripts/n8n/.n8n-runtime/
 
 # ops-pulse の収集結果(ローカルの状態・トークン集計を含む)
 scripts/ops_pulse/data/
+.DS_Store
